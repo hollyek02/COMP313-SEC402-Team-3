@@ -1,0 +1,5 @@
+package com.dealership.repository;
+
+public class CarRepository {
+
+}

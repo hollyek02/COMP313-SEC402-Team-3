@@ -1,0 +1,29 @@
+package com.dealership.controller;
+
+import com.dealership.model.Car;
+import com.dealership.service.CarService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/cars")
+@CrossOrigin(origins = "http://localhost:3000")
+public class CarController {
+
+    private final CarService service;
+
+    public CarController(CarService service){
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<Car> getCars(){
+        return service.getAllCars();
+    }
+
+    @GetMapping("/{id}")
+    public Car getCar(@PathVariable Long id){
+        return service.getCarById(id);
+    }
+}
