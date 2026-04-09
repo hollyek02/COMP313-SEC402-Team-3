@@ -41,10 +41,13 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // Skip login & logout
-        if (path.equals("/api/admin/login") || path.equals("/api/admin/logout")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        if (path.equals("/api/admin/login")
+        || path.equals("/api/admin/logout")
+        || path.equals("/api/users/register")
+        || path.equals("/api/users/login")) {
+    filterChain.doFilter(request, response);
+    return;
+}
 
         String token = null;
 

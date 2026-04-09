@@ -43,10 +43,7 @@ public class TestDriveRequestService {
         req.setStatus(updatedStatus);
         return repository.save(req);
     }
-<<<<<<< HEAD
-}
-=======
-    
+
     public TestDriveRequest getRequestById(Long id) {
         return repository.findById(id).orElse(null);
     }
@@ -59,4 +56,3 @@ public class TestDriveRequestService {
         return false;
     }
 }
->>>>>>> d503c44a1ad7146200230d04951bf3a971585e02

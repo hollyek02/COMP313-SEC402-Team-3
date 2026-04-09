@@ -1,6 +1,5 @@
 package com.dealership.config;
 
-
 import com.dealership.jwt.JwtFilter;
 import com.dealership.service.UserDetailsServiceImpl;
 
@@ -52,15 +51,15 @@ public class SpringConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-    
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173")); //your frontend
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true); //REQUIRED for cookies
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -76,35 +75,38 @@ public class SpringConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
-                    
-                    // Cars
-                    
-                    .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/cars/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/api/cars/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/api/cars/**").hasRole("ADMIN")
+                // Public user auth endpoints
+                .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
 
-                 
-                    // Inquiries
-                  
-                    .requestMatchers(HttpMethod.POST, "/api/inquiries").permitAll() // ✅ public create
-                    .requestMatchers("/api/inquiries/**").hasRole("ADMIN") // 🔒 everything else admin
-                    
-                 
-                 // Test Drive Requests
-                
-                 .requestMatchers(HttpMethod.POST, "/api/test-drives").permitAll() // ✅ public
-                 .requestMatchers("/api/test-drives/**").hasRole("ADMIN") // 🔒 rest secured
+                // Public customer dashboard related endpoints
+                .requestMatchers(HttpMethod.GET, "/api/customer-vehicles/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/service-bookings/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/service-bookings").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/service-bookings/**").permitAll()
 
-                    // -------------------------
-                    .anyRequest().permitAll()
-                ).logout(logout -> logout
-                        .logoutSuccessUrl("/")
-                        );
+                // Cars
+                .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/cars/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/cars/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/cars/**").hasRole("ADMIN")
 
-                    // Add JWT filter BEFORE UsernamePasswordAuthenticationFilter
-                    http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                // Inquiries
+                .requestMatchers(HttpMethod.POST, "/api/inquiries").permitAll()
+                .requestMatchers("/api/inquiries/**").hasRole("ADMIN")
 
-                    return http.build();
+                // Test Drive Requests
+                .requestMatchers(HttpMethod.POST, "/api/test-drives").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/test-drives/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/test-drives/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/test-drives/**").hasRole("ADMIN")
+
+                .anyRequest().permitAll()
+            )
+            .logout(logout -> logout.logoutSuccessUrl("/"));
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }

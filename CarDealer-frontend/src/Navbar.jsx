@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
-
   const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
-<<<<<<< HEAD
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
     navigate("/");
@@ -20,39 +18,22 @@ function Navbar() {
       </div>
 
       <div style={styles.menu}>
-        <button style={styles.button} onClick={() => navigate("/")}>
+        <button style={styles.button} onClick={() => navigate("/browse-vehicles")}>
           Browse Vehicles
         </button>
-=======
-            <div style={styles.menu}>
-                <button style={styles.button} onClick={() => navigate("/browse-vehicles")}>
-                    Browse Vehicles
-                </button>
 
-                <button
-                    style={styles.button}
-                    onClick={() => navigate("/submit-form")}
-                >
-                    Submit Inquiry
-                </button>
-
-                <button
-                    style={styles.button}
-                    onClick={() => navigate("/request-test-drive")}
-                >
-                    Request Test Drive
-                </button>
->>>>>>> d503c44a1ad7146200230d04951bf3a971585e02
-
-        <button style={styles.button} onClick={() => navigate("/")}>
+        <button style={styles.button} onClick={() => navigate("/submit-form")}>
           Submit Inquiry
         </button>
 
-        <button style={styles.button} onClick={() => navigate("/")}>
+        <button style={styles.button} onClick={() => navigate("/request-test-drive")}>
           Request Test Drive
         </button>
 
-<<<<<<< HEAD
+        <button style={styles.button} onClick={() => navigate("/")}>
+          Home
+        </button>
+
         {!loggedInUser ? (
           <>
             <button
@@ -90,16 +71,6 @@ function Navbar() {
       </div>
     </nav>
   );
-=======
-                <button style={styles.button}
-                onClick={() => navigate("/")}
-                >
-                    Home
-                </button>
-            </div>
-        </nav>
-    );
->>>>>>> d503c44a1ad7146200230d04951bf3a971585e02
 }
 
 const styles = {
@@ -111,20 +82,17 @@ const styles = {
     color: "white",
     alignItems: "center"
   },
-
   logo: {
     fontSize: "22px",
     fontWeight: "bold",
     cursor: "pointer"
   },
-
   menu: {
     display: "flex",
     alignItems: "center",
     gap: "10px",
     flexWrap: "wrap"
   },
-
   button: {
     padding: "8px 15px",
     background: "#e4002b",
@@ -132,7 +100,6 @@ const styles = {
     color: "white",
     cursor: "pointer"
   },
-
   sign: {
     padding: "8px 15px",
     background: "#c62828",

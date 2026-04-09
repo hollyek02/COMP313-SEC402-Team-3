@@ -4,18 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 function ViewTestDrives() {
   const [requests, setRequests] = useState([]);
-<<<<<<< HEAD
   const [message, setMessage] = useState("");
-
-  const fetchRequests = () => {
-    fetch("http://localhost:8084/api/test-drives")
-=======
   const navigate = useNavigate();
 
-
-  useEffect(() => {
-    fetch("http://localhost:8084/api/test-drives",{credentials: "include"})
->>>>>>> d503c44a1ad7146200230d04951bf3a971585e02
+  const fetchRequests = () => {
+    fetch("http://localhost:8084/api/test-drives", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setRequests(data))
       .catch((error) =>
@@ -82,8 +75,7 @@ function ViewTestDrives() {
                 <th style={cellStyle}>Car Info</th>
                 <th style={cellStyle}>Status</th>
                 <th style={cellStyle}>Created At</th>
-<<<<<<< HEAD
-                <th style={cellStyle}>Actions</th>
+                <th style={cellStyle}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -93,94 +85,40 @@ function ViewTestDrives() {
                   <td style={cellStyle}>{req.customerName}</td>
                   <td style={cellStyle}>{req.email}</td>
                   <td style={cellStyle}>{req.preferredDate}</td>
-                  <td style={cellStyle}>{req.carId}</td>
+                  <td style={cellStyle}>{req.carinfo || req.carId}</td>
                   <td style={cellStyle}>{req.status}</td>
                   <td style={cellStyle}>{req.createdAt}</td>
                   <td style={cellStyle}>
-                    {req.status === "PENDING" ? (
-                      <div style={{ display: "flex", gap: "10px" }}>
-                        <button
-                          onClick={() => handleStatusUpdate(req.id, "APPROVED")}
-                          style={approveButton}
-                        >
-                          Approve
-                        </button>
+                    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                      {req.status === "PENDING" && (
+                        <>
+                          <button
+                            onClick={() => handleStatusUpdate(req.id, "APPROVED")}
+                            style={approveButton}
+                          >
+                            Approve
+                          </button>
 
-                        <button
-                          onClick={() => handleStatusUpdate(req.id, "REJECTED")}
-                          style={rejectButton}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    ) : (
-                      "-"
-                    )}
+                          <button
+                            onClick={() => handleStatusUpdate(req.id, "REJECTED")}
+                            style={rejectButton}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+
+                      <button
+                        style={viewButton}
+                        onClick={() => navigate(`/test-drive-request/${req.id}`)}
+                      >
+                        View
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
-=======
-                <th style={cellStyle}>Action</th>
-              </tr>
-            </thead>
-           <tbody>
-  {requests.map((req) => (
-    <tr key={req.id}>
-      <td style={cellStyle}>{req.id}</td>
-      <td style={cellStyle}>{req.customerName}</td>
-      <td style={cellStyle}>{req.email}</td>
-      <td style={cellStyle}>{req.preferredDate}</td>
-      <td style={cellStyle}>{req.carinfo}</td>
-
-      {/* Status dropdown */}
-      <td style={cellStyle}>
-        <select
-          value={req.status}
-          onChange={(e) => {
-            const newStatus = e.target.value;
-            // Optionally update backend here
-            fetch(`http://localhost:8084/api/test-drives/${req.id}/status?status=${newStatus}`, {
-              method: "PATCH"
-            })
-            .then(() => {
-              // Update local state
-              setRequests((prev) =>
-                prev.map((r) =>
-                  r.id === req.id ? { ...r, status: newStatus } : r
-                )
-              );
-            })
-            .catch((err) => console.error(err));
-          }}
-          style={{
-            color:
-              req.status === "PENDING"
-                ? "red"
-                : req.status === "IN_PROCESS"
-                ? "blue"
-                : req.status === "COMPLETED"
-                ? "green"
-                : "black",
-            fontWeight: "bold",
-            padding: "5px"
-          }}
-        >
-          <option value="PENDING" style={{ color: "red" }}>Pending</option>
-          <option value="IN_PROCESS" style={{ color: "blue" }}>In Process</option>
-          <option value="COMPLETED" style={{ color: "green" }}>Completed</option>
-        </select>
-      </td>
-
-      <td style={cellStyle}>{req.createdAt}</td>
-
-      <td style={{ ...cellStyle, textAlign:"center"}}>
-  <button style={{ border:"1px solid black"}} onClick={() => navigate(`/test-drive-request/${req.id}`)}>View</button>
-</td>
-    </tr>
-  ))}
-</tbody>
->>>>>>> d503c44a1ad7146200230d04951bf3a971585e02
           </table>
         )}
       </div>
@@ -208,6 +146,15 @@ const rejectButton = {
   background: "#c62828",
   color: "white",
   border: "none",
+  borderRadius: "4px",
+  cursor: "pointer"
+};
+
+const viewButton = {
+  padding: "8px 12px",
+  background: "white",
+  color: "black",
+  border: "1px solid black",
   borderRadius: "4px",
   cursor: "pointer"
 };

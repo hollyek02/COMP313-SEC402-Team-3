@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/test-drives")
-
+@CrossOrigin(origins = "*")
 public class TestDriveRequestController {
 
     private final TestDriveRequestService service;
@@ -49,11 +49,7 @@ public class TestDriveRequestController {
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
     }
-<<<<<<< HEAD
-}
-=======
-    
- //Get by ID
+
     @GetMapping("/{id}")
     public ResponseEntity<TestDriveRequest> getById(@PathVariable Long id) {
         TestDriveRequest request = service.getRequestById(id);
@@ -64,7 +60,6 @@ public class TestDriveRequestController {
         }
     }
 
-    //Delete request by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRequest(@PathVariable Long id) {
         boolean deleted = service.deleteRequest(id);
@@ -75,4 +70,3 @@ public class TestDriveRequestController {
         }
     }
 }
->>>>>>> d503c44a1ad7146200230d04951bf3a971585e02
