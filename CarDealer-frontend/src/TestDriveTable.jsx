@@ -1,36 +1,35 @@
 import React from "react";
 
-const TestDriveTable = () => {
+const TestDriveTable = ({ requests }) => {
   return (
     <div className="table-box">
-      <h3>Test Drive Requests</h3>
+      <h3>Recent Test Drive Requests</h3>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Vehicle</th>
-            <th>Date</th>
-            <th>Status</th>
-          </tr>
-        </thead>
+      {requests.length === 0 ? (
+        <p>No test drive requests found.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Email</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
 
-        <tbody>
-          <tr>
-            <td>Alex Brown</td>
-            <td>Toyota Camry</td>
-            <td>March 12</td>
-            <td>Pending</td>
-          </tr>
-
-          <tr>
-            <td>Maria Garcia</td>
-            <td>Honda Civic</td>
-            <td>March 14</td>
-            <td>Pending</td>
-          </tr>
-        </tbody>
-      </table>
+          <tbody>
+            {requests.map((request) => (
+              <tr key={request.id}>
+                <td>{request.customerName}</td>
+                <td>{request.email}</td>
+                <td>{request.preferredDate}</td>
+                <td>{request.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

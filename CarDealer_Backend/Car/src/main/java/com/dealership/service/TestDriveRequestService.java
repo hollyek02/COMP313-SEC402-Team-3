@@ -16,7 +16,6 @@ public class TestDriveRequestService {
     }
 
     public TestDriveRequest createRequest(TestDriveRequest request) {
-        // make sure new requests always start as PENDING
         request.setStatus("PENDING");
         return repository.save(request);
     }
@@ -32,7 +31,16 @@ public class TestDriveRequestService {
     public TestDriveRequest updateStatus(Long id, String status) {
         TestDriveRequest req = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Test drive request not found"));
-        req.setStatus(status);
+
+        String updatedStatus = status.toUpperCase();
+
+        if (!updatedStatus.equals("PENDING")
+                && !updatedStatus.equals("APPROVED")
+                && !updatedStatus.equals("REJECTED")) {
+            throw new IllegalArgumentException("Invalid status value.");
+        }
+
+        req.setStatus(updatedStatus);
         return repository.save(req);
     }
 }

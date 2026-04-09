@@ -2,82 +2,112 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    return (
-        <nav style={styles.nav}>
-            <div style={styles.logo} onClick={() => navigate("/")}>
-                TOYOTA
-            </div>
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
-            <div style={styles.menu}>
-                <button style={styles.button} onClick={() => navigate("/")}>
-                    Browse Vehicles
-                </button>
+  const handleLogout = () => {
+    localStorage.removeItem("loggedInUser");
+    navigate("/");
+    window.location.reload();
+  };
 
-                <button
-                    style={styles.button}
-                    onClick={() => navigate("/")}
-                >
-                    Submit Inquiry
-                </button>
+  return (
+    <nav style={styles.nav}>
+      <div style={styles.logo} onClick={() => navigate("/")}>
+        TOYOTA
+      </div>
 
-                <button
-                    style={styles.button}
-                    onClick={() => navigate("/")}
-                >
-                    Request Test Drive
-                </button>
+      <div style={styles.menu}>
+        <button style={styles.button} onClick={() => navigate("/")}>
+          Browse Vehicles
+        </button>
 
-               
+        <button style={styles.button} onClick={() => navigate("/")}>
+          Submit Inquiry
+        </button>
 
-                
+        <button style={styles.button} onClick={() => navigate("/")}>
+          Request Test Drive
+        </button>
 
-                <button style={styles.sign}>
-                    Hello, Sign In
-                </button>
-            </div>
-        </nav>
-    );
+        {!loggedInUser ? (
+          <>
+            <button
+              style={styles.sign}
+              onClick={() => navigate("/customer-register")}
+            >
+              Register
+            </button>
+
+            <button
+              style={styles.sign}
+              onClick={() => navigate("/customer-login")}
+            >
+              Customer Login
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              style={styles.sign}
+              onClick={() => navigate("/customer-dashboard")}
+            >
+              My Dashboard
+            </button>
+
+            <button style={styles.sign}>
+              Hello, {loggedInUser.fullName}
+            </button>
+
+            <button style={styles.sign} onClick={handleLogout}>
+              Logout
+            </button>
+          </>
+        )}
+      </div>
+    </nav>
+  );
 }
 
 const styles = {
-    nav: {
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "15px 40px",
-        background: "black",
-        color: "white",
-        alignItems: "center"
-    },
+  nav: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "15px 40px",
+    background: "black",
+    color: "white",
+    alignItems: "center"
+  },
 
-    logo: {
-        fontSize: "22px",
-        fontWeight: "bold",
-        cursor: "pointer"
-    },
+  logo: {
+    fontSize: "22px",
+    fontWeight: "bold",
+    cursor: "pointer"
+  },
 
-    menu: {
-        display: "flex",
-        alignItems: "center",
-        gap: "10px"
-    },
+  menu: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    flexWrap: "wrap"
+  },
 
-    button: {
-        padding: "8px 15px",
-        background: "#e4002b",
-        border: "none",
-        color: "white",
-        cursor: "pointer"
-    },
+  button: {
+    padding: "8px 15px",
+    background: "#e4002b",
+    border: "none",
+    color: "white",
+    cursor: "pointer"
+  },
 
-    sign: {
-        padding: "8px 15px",
-        background: "#c62828",
-        border: "none",
-        color: "white",
-        cursor: "pointer"
-    }
+  sign: {
+    padding: "8px 15px",
+    background: "#c62828",
+    border: "none",
+    color: "white",
+    cursor: "pointer"
+  }
 };
 
 export default Navbar;
