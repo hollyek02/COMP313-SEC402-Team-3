@@ -31,15 +31,23 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     @Lazy
     private  UserDetailsServiceImpl userService;
-
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String path = request.getServletPath();
+
+        // Skip login & logout
+        if (path.equals("/api/admin/login") || path.equals("/api/admin/logout")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String token = null;
 
-        // Extract access token from cookies
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("access_token".equals(cookie.getName())) {
@@ -50,7 +58,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                String email = jwtUtil.validateAccessToken(token); // <--- FIXED
+                String email = jwtUtil.validateAccessToken(token);
                 UserDetails userDetails = userService.loadUserByUsername(email);
 
                 UsernamePasswordAuthenticationToken authToken =
@@ -62,13 +70,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
             } catch (Exception ignored) {
-            	// Token invalid or expired → stop processing and return 401
-               response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"error\": \"Access token expired or invalid\"}");
-                return;
+                // DO NOT BLOCK REQUEST
+                SecurityContextHolder.clearContext();
             }
         }
 
         filterChain.doFilter(request, response);
     }
+    
+
+   
 }

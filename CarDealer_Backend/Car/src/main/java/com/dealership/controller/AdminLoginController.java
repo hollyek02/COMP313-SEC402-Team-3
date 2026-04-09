@@ -46,106 +46,7 @@ public class AdminLoginController {
     private PasswordEncoder passwordEncoder;
     
 
-    /*@PostMapping("/login")
-    public String loginAdmin(@RequestBody Admin admin) {
-    	System.out.println("hello");
-
-        boolean isValid = adminService.validateAdmin(admin.getUsername(), admin.getPassword());
-
-        if (isValid) {
-            return "Login Successful";
-        } else {
-            return "Invalid Email or Password";
-        }
-    }*/
-    
-    
-    /*@PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Admin admin,  HttpServletResponse response) {
-        try {
-            String username = admin.getUsername();
-            String password = admin.getPassword();
-
-            // Find user by username
-            Admin dbUser = adminService.findAdmin(username);
-            if (dbUser == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ApiResponse<>(false, null, "Incorrect username or password"));
-            }
-
-            // Validate password
-            if (!passwordEncoder.matches(password, dbUser.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ApiResponse<>(false, null, "Incorrect username or password"));
-            }
-
-            // Authenticate user
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-
-            // Store authentication in SecurityContext
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
-            // Create JWT
-            String jwt = jwtUtil.generateAccessToken(username);
-            
-            ResponseCookie accessCookie = jwtUtil.createAccessTokenCookie(jwt);
-
-            
-
-            response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-
-            // Build response DTO
-            AdminResponseDTO adminresponse = new AdminResponseDTO(
-                    jwt, dbUser.getId(), dbUser.getUsername()
-            );
-
-            // Return success response
-            return ResponseEntity.ok(adminresponse);
-
-        } catch (Exception e) {
-            // Return failure response with message
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse<>(false, null, "Login failed: " + e.getMessage()));
-        }
-    }*/
-    
-    /*@PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Admin admin, HttpServletResponse response) {
-        try {
-            String username = admin.getUsername();
-            String password = admin.getPassword();
-
-            // 🔥 Let Spring authenticate
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-
-            // Store authentication
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            // Get user from DB (optional, for response)
-            Admin dbUser = adminService.findAdmin(username);
-
-            // Generate JWT
-            String jwt = jwtUtil.generateAccessToken(username);
-            ResponseCookie cookie = jwtUtil.createAccessTokenCookie(jwt);
-            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-            // Response
-            AdminResponseDTO adminResponse = new AdminResponseDTO(
-                    jwt, dbUser.getId(), dbUser.getUsername()
-            );
-
-            return ResponseEntity.ok(adminResponse);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ApiResponse<>(false, null, "Incorrect username or password"));
-        }
-    }*/
+   
     
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Admin admin, HttpServletResponse response) {
@@ -153,22 +54,22 @@ public class AdminLoginController {
             String username = admin.getUsername();
             String password = admin.getPassword();
 
-            System.out.println("🔐 Login attempt for: " + username);
+            System.out.println("Login attempt for: " + username);
 
             // 🔥 Authenticate
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
             );
 
-            System.out.println("✅ Authentication successful");
+            System.out.println("Authentication successful");
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             Admin dbUser = adminService.findAdmin(username);
-            System.out.println("👤 DB User: " + dbUser);
+            System.out.println("DB User: " + dbUser);
 
             String jwt = jwtUtil.generateAccessToken(username);
-            System.out.println("🪪 JWT generated");
+            System.out.println("JWT generated");
 
             ResponseCookie cookie = jwtUtil.createAccessTokenCookie(jwt);
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -183,12 +84,37 @@ public class AdminLoginController {
             return ResponseEntity.ok(adminResponse);
 
         } catch (Exception e) {
-            System.out.println("❌ LOGIN ERROR: " + e.getMessage());
-            e.printStackTrace(); // 🔥 VERY IMPORTANT
+            System.out.println("LOGIN ERROR: " + e.getMessage());
+            e.printStackTrace(); // VERY IMPORTANT
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponse<>(false, null, "Incorrect username or password"));
         }
+    }
+    
+    
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+        System.out.println("Logout request received");
+
+        // Clear JWT cookie
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false) // change to true in production (HTTPS)
+                .path("/")
+                .maxAge(0) // THIS deletes the cookie
+                .sameSite("Lax")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        // Clear Spring Security context
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Logged out successfully"
+        ));
     }
     
     

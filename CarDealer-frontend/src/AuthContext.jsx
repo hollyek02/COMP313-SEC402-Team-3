@@ -32,6 +32,22 @@ export const AuthProvider = ({ children }) => {
     console.log("Loading finished");
   }
 };
+
+ const logout = async () => {
+    try {
+      await fetch("http://localhost:8084/api/admin/logout", {
+        method: "POST", // or GET depending on backend
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      // clear user on frontend no matter what
+      setUser(null);
+    }
+  };
+
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -42,7 +58,8 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser,
         loading,
-        fetchUser
+        fetchUser,
+        logout 
       }}
     >
       {children}
