@@ -1,10 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import ManageVehicles from "./ManageVehicles";
+import { useAuth } from "./AuthContext"; 
 
 const Sidebar = () => {
 
   const navigate = useNavigate();
+
+  const { logout } = useAuth(); 
+
+    const handleLogout = async () => {
+    await logout();           
+    navigate("/admin");       
+  };
 
   return (
     <div className="sidebar">
@@ -25,7 +33,7 @@ const Sidebar = () => {
           Test Drives
         </li>
 
-        <li onClick={() => navigate("/admin")}>
+        <li onClick={handleLogout}>
           Logout
         </li>
       </ul>

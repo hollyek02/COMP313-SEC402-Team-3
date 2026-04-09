@@ -95,7 +95,7 @@ public class JwtUtil {
 	        return Jwts.builder()
 	                .setSubject(email)
 	                .setIssuedAt(new Date())
-	                .setExpiration(new Date(System.currentTimeMillis() + 1 * 60 * 1000)) // 1 min
+	                .setExpiration(new Date(System.currentTimeMillis() + 5* 60 * 1000)) // 1 min
 	                .signWith(getSigningKey())
 	                .compact();
 	    }
@@ -106,7 +106,7 @@ public class JwtUtil {
 	    public ResponseCookie createAccessTokenCookie(String token) {
 	        return ResponseCookie.from("access_token", token)
 	                .httpOnly(true)
-	                .secure(true)
+	                .secure(false)
 	                .path("/")
 	                .maxAge(60 * 10)
 	                .sameSite("Lax")

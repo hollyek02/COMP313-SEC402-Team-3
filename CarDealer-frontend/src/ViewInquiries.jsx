@@ -9,7 +9,7 @@ function ViewInquiries() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:8084/api/inquiries")
+    fetch("http://localhost:8084/api/inquiries", {credentials: "include"})
       .then((res) => res.json())
       .then((data) => setInquiries(data))
       .catch((error) => console.error("Error fetching inquiries:", error));
