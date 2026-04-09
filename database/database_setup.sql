@@ -1,3 +1,13 @@
+✅ FULL DATABASE SCRIPT
+-- =========================
+-- DATABASE
+-- =========================
+CREATE DATABASE IF NOT EXISTS car_dealership;
+USE car_dealership;
+
+-- =========================
+-- CAR TABLE
+-- =========================
 CREATE TABLE car (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
@@ -5,7 +15,6 @@ CREATE TABLE car (
     image VARCHAR(255),
     description TEXT
 );
-
 
 INSERT INTO car (name, price, image, description)
 VALUES
@@ -16,7 +25,32 @@ VALUES
 ('2025 Toyota Camry', '29000', '2025_Camry.jpg', 'Comfortable midsize sedan with excellent fuel efficiency'),
 ('2024 Toyota Tacoma', '35000', '2024_Tacoma.jpg', 'Powerful pickup truck designed for off-road capability');
 
+-- =========================
+-- ADMIN TABLE
+-- =========================
+CREATE TABLE admins (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(100),
+    password VARCHAR(100)
+);
 
+INSERT INTO admins (username, password)
+VALUES ('Rubiya', 'admin123');
+
+-- =========================
+-- USER TABLE (CUSTOMERS)
+-- =========================
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) DEFAULT 'CUSTOMER'
+);
+
+-- =========================
+-- INQUIRY TABLE
+-- =========================
 CREATE TABLE inquiry (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_name VARCHAR(100) NOT NULL,
@@ -26,7 +60,9 @@ CREATE TABLE inquiry (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
+-- =========================
+-- TEST DRIVE REQUEST
+-- =========================
 CREATE TABLE test_drive_request (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_name VARCHAR(100) NOT NULL,
@@ -37,12 +73,32 @@ CREATE TABLE test_drive_request (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
-CREATE TABLE admins (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(100),
-    password VARCHAR(100)
+-- =========================
+-- CUSTOMER VEHICLES
+-- =========================
+CREATE TABLE customer_vehicle (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    car_name VARCHAR(255),
+    purchase_date DATE,
+    status VARCHAR(50),
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-INSERT INTO admins (username, password)
-VALUES ('Rubiya', 'admin123');
+-- =========================
+-- SERVICE BOOKINGS
+-- =========================
+CREATE TABLE service_booking (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    vehicle_id BIGINT NOT NULL,
+    service_date DATE NOT NULL,
+    time_slot VARCHAR(50),
+    service_type VARCHAR(100),
+    status VARCHAR(50) DEFAULT 'BOOKED',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (vehicle_id) REFERENCES customer_vehicle(id) ON DELETE CASCADE
+);
