@@ -11,5 +11,5 @@ public interface TestDriveRequestRepository extends JpaRepository<TestDriveReque
 
     List<TestDriveRequest> findByEmail(String email);
 
-    List<TestDriveRequest> findByCarId(Long carId);
+   
 }

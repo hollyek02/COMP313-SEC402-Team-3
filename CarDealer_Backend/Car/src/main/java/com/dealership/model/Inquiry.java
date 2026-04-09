@@ -20,11 +20,20 @@ public class Inquiry {
     @Column(nullable = false)
     private String message;
 
-    @Column(name = "car_id")
-    private Long carId;
+   /* @Column(name = "car_id")
+    private Long carId;*/
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    
+    private String status;
+    
+    public Inquiry() {
+    }
+    
+    public Inquiry(String status) {
+    	this.status = "PENDING";
+    }
 
     @PrePersist
     public void prePersist() {
@@ -59,15 +68,23 @@ public class Inquiry {
         this.message = message;
     }
 
-    public Long getCarId() {
+   /* public Long getCarId() {
         return carId;
     }
 
     public void setCarId(Long carId) {
         this.carId = carId;
-    }
+    }*/
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

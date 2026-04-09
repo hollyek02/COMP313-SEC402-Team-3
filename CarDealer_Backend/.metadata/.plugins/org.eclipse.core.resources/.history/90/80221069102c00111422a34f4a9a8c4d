@@ -1,0 +1,55 @@
+package com.dealership.controller;
+
+import com.dealership.model.Inquiry;
+import com.dealership.model.TestDriveRequest;
+import com.dealership.service.InquiryService;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/inquiries")
+@CrossOrigin(origins = "*")
+public class InquiryController {
+
+    private final InquiryService inquiryService;
+
+    public InquiryController(InquiryService inquiryService) {
+        this.inquiryService = inquiryService;
+    }
+
+    @PostMapping
+    public Inquiry createInquiry(@RequestBody Inquiry inquiry) {
+        return inquiryService.saveInquiry(inquiry);
+    }
+
+    @GetMapping
+    public List<Inquiry> getAllInquiries() {
+        return inquiryService.getAllInquiries();
+    }
+    
+    
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Inquiry> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        Inquiry updated = inquiryService.updateStatus(id, status);
+        return ResponseEntity.ok(updated);
+    }
+    
+ // ✅ Get inquiry by ID
+    public Inquiry getInquiryById(Long id) {
+        return inquiryRepository.findById(id).orElse(null);
+    }
+
+    // ✅ Delete inquiry by ID
+    public boolean deleteInquiry(Long id) {
+        if (inquiryRepository.existsById(id)) {
+            inquiryRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+}

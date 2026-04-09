@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
+import { useNavigate } from "react-router-dom";
+
+
 
 function ViewInquiries() {
   const [inquiries, setInquiries] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:8084/api/inquiries")
@@ -34,22 +38,74 @@ function ViewInquiries() {
                 <th style={cellStyle}>Customer Name</th>
                 <th style={cellStyle}>Email</th>
                 <th style={cellStyle}>Message</th>
-                <th style={cellStyle}>Car ID</th>
+                
                 <th style={cellStyle}>Created At</th>
+                <th style={cellStyle}>Status</th>
+                <th style={cellStyle}>Action</th>
               </tr>
             </thead>
             <tbody>
-              {inquiries.map((inquiry) => (
-                <tr key={inquiry.id}>
-                  <td style={cellStyle}>{inquiry.id}</td>
-                  <td style={cellStyle}>{inquiry.customerName}</td>
-                  <td style={cellStyle}>{inquiry.email}</td>
-                  <td style={cellStyle}>{inquiry.message}</td>
-                  <td style={cellStyle}>{inquiry.carId}</td>
-                  <td style={cellStyle}>{inquiry.createdAt}</td>
-                </tr>
-              ))}
-            </tbody>
+  {inquiries.map((inquiry) => (
+    <tr key={inquiry.id}>
+      <td style={cellStyle}>{inquiry.id}</td>
+      <td style={cellStyle}>{inquiry.customerName}</td>
+      <td style={cellStyle}>{inquiry.email}</td>
+      <td style={cellStyle}>{inquiry.message}</td>
+      <td style={cellStyle}>{inquiry.createdAt}</td>
+
+
+      {/* ✅ Status dropdown */}
+      <td style={{cellStyle, textAlign:"center"}}>
+        <select
+          value={inquiry.status || "PENDING"}   // fallback
+          onChange={(e) => {
+            const newStatus = e.target.value;
+
+            fetch(
+              `http://localhost:8084/api/inquiries/${inquiry.id}/status?status=${newStatus}`,
+              { method: "PATCH",credentials: "include" }
+            )
+              .then(() => {
+                setInquiries((prev) =>
+                  prev.map((i) =>
+                    i.id === inquiry.id
+                      ? { ...i, status: newStatus }
+                      : i
+                  )
+                );
+              })
+              .catch((err) => console.error(err));
+          }}
+          style={{
+            color:
+              inquiry.status === "PENDING"
+                ? "red"
+                : inquiry.status === "IN_PROCESS"
+                ? "blue"
+                : inquiry.status === "COMPLETED"
+                ? "green"
+                : "black",
+            fontWeight: "bold",
+            padding: "5px"
+          }}
+        >
+          <option value="PENDING" style={{ color: "red" }}>
+            Pending
+          </option>
+          <option value="IN_PROCESS" style={{ color: "blue" }}>
+            In Process
+          </option>
+          <option value="COMPLETED" style={{ color: "green" }}>
+            Completed
+          </option>
+        </select>
+      </td>
+      <td style={{ ...cellStyle, textAlign:"center"}}>
+  <button style={{ border:"1px solid black"}} onClick={() => navigate(`/customer-inquiry/${inquiry.id}`)}>View</button>
+</td>
+    </tr>
+  ))}
+</tbody>
           </table>
         )}
       </div>
@@ -62,5 +118,6 @@ const cellStyle = {
   padding: "10px",
   textAlign: "left"
 };
+
 
 export default ViewInquiries;

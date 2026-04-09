@@ -10,4 +10,8 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     Optional<Admin> findByUsernameAndPassword(String username, String password);
 
+	Admin findByUsername(String username);
+
+	void deleteById(Integer id);
+
 }

@@ -1,0 +1,14 @@
+spring.application.name=Car
+spring.datasource.url=jdbc:mysql://localhost:3306/car
+spring.datasource.username=rubiya
+spring.datasource.password=password123
+
+
+
+
+server.port=8084
+
+aws.acess.key=AKIAR3MHAIPTGDQ7GMHK
+aws.secret.key=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
+aws.region=ca-central-1
+aws.s3.bucket.name=car-bucket

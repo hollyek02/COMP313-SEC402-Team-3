@@ -6,6 +6,7 @@ function Navbar() {
 
   const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
+<<<<<<< HEAD
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
     navigate("/");
@@ -22,6 +23,26 @@ function Navbar() {
         <button style={styles.button} onClick={() => navigate("/")}>
           Browse Vehicles
         </button>
+=======
+            <div style={styles.menu}>
+                <button style={styles.button} onClick={() => navigate("/browse-vehicles")}>
+                    Browse Vehicles
+                </button>
+
+                <button
+                    style={styles.button}
+                    onClick={() => navigate("/submit-form")}
+                >
+                    Submit Inquiry
+                </button>
+
+                <button
+                    style={styles.button}
+                    onClick={() => navigate("/request-test-drive")}
+                >
+                    Request Test Drive
+                </button>
+>>>>>>> d503c44a1ad7146200230d04951bf3a971585e02
 
         <button style={styles.button} onClick={() => navigate("/")}>
           Submit Inquiry
@@ -31,6 +52,7 @@ function Navbar() {
           Request Test Drive
         </button>
 
+<<<<<<< HEAD
         {!loggedInUser ? (
           <>
             <button
@@ -68,6 +90,16 @@ function Navbar() {
       </div>
     </nav>
   );
+=======
+                <button style={styles.button}
+                onClick={() => navigate("/")}
+                >
+                    Home
+                </button>
+            </div>
+        </nav>
+    );
+>>>>>>> d503c44a1ad7146200230d04951bf3a971585e02
 }
 
 const styles = {

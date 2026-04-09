@@ -5,13 +5,16 @@ function ManageVehicles() {
     const [formData, setFormData] = useState({
         name: "",
         price: "",
-        image: "",
+        
         description: ""
     });
+
+    const [file, setFile] = useState(null);
+
     const [editingId, setEditingId] = useState(null);
 
     const fetchCars = () => {
-        fetch("http://localhost:8084/api/cars")
+        fetch("http://localhost:8084/api/cars",{credentials: "include"})
             .then((res) => res.json())
             .then((data) => setCars(data))
             .catch((error) => console.error("Error fetching cars:", error));
@@ -28,51 +31,78 @@ function ManageVehicles() {
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        const url = editingId
-            ? `http://localhost:8084/api/cars/${editingId}`
-            : "http://localhost:8084/api/cars";
+    const url = editingId
+        ? `http://localhost:8084/api/cars/${editingId}`
+        : "http://localhost:8084/api/cars";
 
-        const method = editingId ? "PUT" : "POST";
+    const method = editingId ? "PUT" : "POST";
 
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
+    try {
+
+        // ❌ REMOVE JSON approach
+        /*
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+        */
+
+        // ✅ USE FORM DATA INSTEAD
+        const formDataToSend = new FormData();
+
+        formDataToSend.append("name", formData.name);
+        formDataToSend.append("price", formData.price);
+        formDataToSend.append("description", formData.description);
+
+        // ✅ add file
+        if (file) {
+            formDataToSend.append("file", file);
+        }
+
+        const response = await fetch(url, {
+            method: method,
+            credentials: "include",
+            body: formDataToSend
+        });
+
+        if (response.ok) {
+            fetchCars();
+
+            // reset form
+            setFormData({
+                name: "",
+                price: "",
+                description: ""
             });
 
-            if (response.ok) {
-                fetchCars();
-                setFormData({
-                    name: "",
-                    price: "",
-                    image: "",
-                    description: ""
-                });
-                setEditingId(null);
-            } else {
-                alert("Failed to save vehicle.");
-            }
-        } catch (error) {
-            console.error("Error saving vehicle:", error);
-            alert("Error saving vehicle.");
-        }
-    };
+            setFile(null); // ✅ reset file
 
-    const handleEdit = (car) => {
-        setFormData({
-            name: car.name,
-            price: car.price,
-            image: car.image,
-            description: car.description
-        });
-        setEditingId(car.id);
-    };
+            setEditingId(null);
+        } else {
+            alert("Failed to save vehicle.");
+        }
+
+    } catch (error) {
+        console.error("Error saving vehicle:", error);
+        alert("Error saving vehicle.");
+    }
+};
+
+   const handleEdit = (car) => {
+    setFormData({
+        name: car.name,
+        price: car.price,
+        description: car.description
+    });
+
+    // ❌ REMOVE THIS (since we no longer use filename)
+    // image: car.image
+
+    setEditingId(car.id);
+};
 
     const handleDelete = async (id) => {
         const confirmed = window.confirm("Are you sure you want to delete this vehicle?");
@@ -80,7 +110,7 @@ function ManageVehicles() {
 
         try {
             const response = await fetch(`http://localhost:8084/api/cars/${id}`, {
-                method: "DELETE"
+                method: "DELETE",credentials: "include"
             });
 
             if (response.ok) {
@@ -94,15 +124,20 @@ function ManageVehicles() {
         }
     };
 
-    const handleCancelEdit = () => {
-        setEditingId(null);
-        setFormData({
-            name: "",
-            price: "",
-            image: "",
-            description: ""
-        });
-    };
+   const handleCancelEdit = () => {
+    setEditingId(null);
+
+    setFormData({
+        name: "",
+        price: "",
+        description: ""
+    });
+
+    setFile(null); // ✅ reset file
+
+    // ❌ REMOVE THIS
+    // image: ""
+};
 
     return (
         <div style={{ display: "flex" }}>
@@ -141,7 +176,7 @@ function ManageVehicles() {
                         style={inputStyle}
                     />
 
-                    <input
+                   { /*<input
                         type="text"
                         name="image"
                         placeholder="Image filename (example: 2026_RAV4.jpg)"
@@ -149,7 +184,17 @@ function ManageVehicles() {
                         onChange={handleChange}
                         required
                         style={inputStyle}
-                    />
+                    />*/}
+
+     <input
+    type="file"
+    onChange={(e) => setFile(e.target.files[0])}
+    required={!editingId}
+/>
+
+                    
+
+                    
 
                     <textarea
                         name="description"
@@ -204,18 +249,25 @@ function ManageVehicles() {
                                     <td style={cellStyle}>{car.id}</td>
                                     <td style={cellStyle}>{car.name}</td>
                                     <td style={cellStyle}>${car.price}</td>
-                                    <td style={cellStyle}>{car.image}</td>
+                                    <td style={cellStyle}>
+    <img 
+        src={car.image} 
+        alt={car.name}
+        style={{ width: "100px", height: "60px", objectFit: "cover" }}
+    />
+</td>
                                     <td style={cellStyle}>{car.description}</td>
                                     <td style={cellStyle}>
                                         <button
                                             onClick={() => handleEdit(car)}
-                                            style={{ ...primaryButton, marginRight: "10px" }}
+                                            style={{ ...primaryButton, marginRight: "10px", marginBottom:"10px",width:"90%" }}
                                         >
                                             Edit
                                         </button>
+                                        
                                         <button
                                             onClick={() => handleDelete(car.id)}
-                                            style={deleteButton}
+                                            style={{...deleteButton,width:"90%"}}
                                         >
                                             Delete
                                         </button>
