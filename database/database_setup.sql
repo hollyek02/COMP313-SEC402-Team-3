@@ -36,3 +36,13 @@ CREATE TABLE test_drive_request (
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE admins (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(100),
+    password VARCHAR(100)
+);
+
+INSERT INTO admins (username, password)
+VALUES ('Rubiya', 'admin123');
