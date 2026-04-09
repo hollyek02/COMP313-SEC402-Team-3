@@ -1,0 +1,99 @@
+package com.dealership.controller;
+
+
+import com.dealership.dto.ApiResponse;
+import com.dealership.jwt.JwtUtil;
+import com.dealership.model.Admin;
+import com.dealership.service.AdminService;
+import com.dealership.service.UserDetailsServiceImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+import com.dealership.dto.AdminResponseDTO;
+import org.springframework.http.HttpStatus;
+
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin(origins = "*")
+public class AdminLoginController {
+
+    @Autowired
+    private AdminService adminService;
+    
+    
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+  
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/login")
+    public String loginAdmin(@RequestBody Admin admin) {
+    	System.out.println("hello");
+
+        boolean isValid = adminService.validateAdmin(admin.getUsername(), admin.getPassword());
+
+        if (isValid) {
+            return "Login Successful";
+        } else {
+            return "Invalid Email or Password";
+        }
+    }
+    
+    
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AdminResponseDTO>> login(@RequestBody Admin admin) {
+        try {
+            String username = admin.getUsername();
+            String password = admin.getPassword();
+
+            // Find user by username
+            Admin dbUser = adminService.findAdmin(username);
+            if (dbUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse<>(false, null, "Incorrect username or password"));
+            }
+
+            // Validate password
+            if (!passwordEncoder.matches(password, dbUser.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse<>(false, null, "Incorrect username or password"));
+            }
+
+            // Authenticate user
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+
+            // Store authentication in SecurityContext
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+            // Create JWT
+            String jwt = jwtUtil.generateToken(username);
+
+            // Build response DTO
+            AdminResponseDTO response = new AdminResponseDTO(
+                    jwt, dbUser.getId(), dbUser.getUsername(), dbUser.getuserName()
+            );
+
+            // Return success response
+            return ResponseEntity.ok(new ApiResponse<>(true, response, "Login successful"));
+
+        } catch (Exception e) {
+            // Return failure response with message
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse<>(false, null, "Login failed: " + e.getMessage()));
+        }
+    }
+}

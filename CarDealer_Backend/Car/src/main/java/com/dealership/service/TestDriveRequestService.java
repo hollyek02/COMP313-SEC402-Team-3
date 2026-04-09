@@ -35,4 +35,16 @@ public class TestDriveRequestService {
         req.setStatus(status);
         return repository.save(req);
     }
+    
+    public TestDriveRequest getRequestById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    public boolean deleteRequest(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

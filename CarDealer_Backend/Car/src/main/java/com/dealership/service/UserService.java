@@ -1,0 +1,33 @@
+package com.dealership.service;
+
+import com.dealership.model.Admin;
+
+
+
+
+
+import java.util.List;
+import java.util.Optional;
+
+
+public interface UserService {
+
+ 
+
+  
+
+    
+        
+    public void saveAdmin(Admin user);
+        
+
+    public void saveUser(Admin user);
+
+    public List<Admin> getAll() ;
+
+    public Optional<Admin> findById(Integer id);
+
+    public void deleteById(Integer id);
+
+    public Admin findByUsername(String username);
+}

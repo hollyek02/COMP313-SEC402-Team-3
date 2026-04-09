@@ -1,0 +1,29 @@
+package com.dealership.controller;
+
+import com.dealership.model.Inquiry;
+import com.dealership.service.InquiryService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/inquiries")
+@CrossOrigin(origins = "*")
+public class InquiryController {
+
+    private final InquiryService inquiryService;
+
+    public InquiryController(InquiryService inquiryService) {
+        this.inquiryService = inquiryService;
+    }
+
+    @PostMapping
+    public Inquiry createInquiry(@RequestBody Inquiry inquiry) {
+        return inquiryService.saveInquiry(inquiry);
+    }
+
+    @GetMapping
+    public List<Inquiry> getAllInquiries() {
+        return inquiryService.getAllInquiries();
+    }
+}

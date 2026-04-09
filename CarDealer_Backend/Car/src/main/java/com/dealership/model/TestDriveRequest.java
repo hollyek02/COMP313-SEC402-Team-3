@@ -1,5 +1,7 @@
 package com.dealership.model;
 
+import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "test_drive_request")
@@ -22,7 +26,11 @@ public class TestDriveRequest {
 
     private LocalDate preferredDate;
 
-    private Long carId;
+    @Column(name="carinfo")
+    @JsonProperty("carinfo")
+    private String carInfo;
+
+   
 
     private String status;
 
@@ -33,7 +41,7 @@ public class TestDriveRequest {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Long getId() {
+   public Long getId() {
         return id;
     }
 
@@ -65,13 +73,8 @@ public class TestDriveRequest {
         this.preferredDate = preferredDate;
     }
 
-    public Long getCarId() {
-        return carId;
-    }
-
-    public void setCarId(Long carId) {
-        this.carId = carId;
-    }
+    public String getCarInfo() { return carInfo; }
+    public void setCarInfo(String carInfo) { this.carInfo = carInfo; }
 
     public String getStatus() {
         return status;

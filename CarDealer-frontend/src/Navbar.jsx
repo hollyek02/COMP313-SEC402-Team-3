@@ -11,20 +11,20 @@ function Navbar() {
             </div>
 
             <div style={styles.menu}>
-                <button style={styles.button} onClick={() => navigate("/")}>
+                <button style={styles.button} onClick={() => navigate("/browse-vehicles")}>
                     Browse Vehicles
                 </button>
 
                 <button
                     style={styles.button}
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/submit-form")}
                 >
                     Submit Inquiry
                 </button>
 
                 <button
                     style={styles.button}
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/request-test-drive")}
                 >
                     Request Test Drive
                 </button>
@@ -33,8 +33,10 @@ function Navbar() {
 
                 
 
-                <button style={styles.sign}>
-                    Hello, Sign In
+                <button style={styles.button}
+                onClick={() => navigate("/")}
+                >
+                    Home
                 </button>
             </div>
         </nav>

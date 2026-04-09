@@ -1,0 +1,29 @@
+package com.dealership.controller;
+
+
+import com.dealership.model.Admin;
+import com.dealership.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin(origins = "*")
+public class AdminLoginController {
+
+    @Autowired
+    private AdminService adminService;
+
+    @PostMapping("/login")
+    public String loginAdmin(@RequestBody Admin admin) {
+    	System.out.println("hello");
+
+        boolean isValid = adminService.validateAdmin(admin.getUsername(), admin.getPassword());
+
+        if (isValid) {
+            return "Login Successful";
+        } else {
+            return "Invalid Email or Password";
+        }
+    }
+}

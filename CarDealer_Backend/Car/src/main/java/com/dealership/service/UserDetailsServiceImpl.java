@@ -1,0 +1,110 @@
+package com.dealership.service;
+
+
+
+import com.dealership.repository.AdminRepository;
+import com.dealership.model.Admin;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import org.springframework.stereotype.Service;
+
+
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService,UserService {
+
+    @Autowired
+    private AdminRepository adminRepository;
+    
+
+    public Admin findByUsername(String username) {
+        return adminRepository.findByUsername(username);
+    }
+    
+     
+    @Override
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+
+        Admin user = adminRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+        System.out.println("User found: " + user.getUsername());
+        System.out.println("DB Password: " + user.getPassword());
+        System.out.println("Role: " + user.getRole());
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRole()) 
+                .build();
+    }
+    
+ 
+
+
+
+
+
+
+	@Override
+	public void saveAdmin(Admin user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+	@Override
+	public void saveUser(Admin user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+
+
+	@Override
+	public List<Admin> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+
+
+
+	@Override
+	public Optional<Admin> findById(Integer id) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+
+
+
+
+
+	@Override
+	public void deleteById(Integer id) {
+		// TODO Auto-generated method stub
+		
+	}
+}

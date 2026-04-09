@@ -1,0 +1,98 @@
+package com.dealership.service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+
+import java.io.IOException;
+import java.util.UUID;
+
+@Service
+public class S3Service {
+
+    private final S3Client s3Client;
+    private final String bucketName;
+    private final String region;
+
+    public S3Service(
+            @Value("${aws.s3.bucket.name}") String bucketName,
+            @Value("${aws.region}") String region,
+            @Value("${aws.access.key}") String accessKey,
+            @Value("${aws.secret.key}") String secretKey
+    ) {
+        this.bucketName = bucketName;
+        this.region = region;
+
+        this.s3Client = S3Client.builder()
+                .region(Region.of(region))
+                .credentialsProvider(
+                        StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(accessKey, secretKey)
+                        )
+                )
+                .build();
+    }
+
+
+    public String uploadFile(MultipartFile file) {
+        try {
+            System.out.println("Uploading file: " + file.getOriginalFilename());
+
+            String originalName = file.getOriginalFilename();
+
+            if (originalName == null || !originalName.contains(".")) {
+                throw new RuntimeException("Invalid file name");
+            }
+
+            String ext = originalName.substring(originalName.lastIndexOf("."));
+            String fileName = UUID.randomUUID().toString().replace("-", "") + ext;
+
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(fileName)
+                            .contentType(file.getContentType())
+                            //.acl("public-read")
+                            .build(),
+                    RequestBody.fromBytes(file.getBytes())
+            );
+
+            System.out.println("Upload successful: " + fileName);
+
+            return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + fileName;
+
+        } catch (Exception e) {
+            e.printStackTrace(); // 🔥 VERY IMPORTANT
+            throw new RuntimeException("Failed to upload file to S3", e);
+        }
+    }
+
+    public void deleteFile(String fileUrl) {
+        String fileName = extractFileName(fileUrl);
+
+        s3Client.deleteObject(
+                DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(fileName)
+                        .build()
+        );
+    }
+
+    public String updateFile(String oldFileUrl, MultipartFile newFile) {
+        if (oldFileUrl != null && !oldFileUrl.isEmpty()) {
+            deleteFile(oldFileUrl);
+        }
+        return uploadFile(newFile);
+    }
+
+    private String extractFileName(String fileUrl) {
+        return fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+    }
+}

@@ -48,36 +48,49 @@ gap:"30px",
 padding:"60px"
 }}>
 
-{cars.map(car=>(
 
+
+
+{cars.slice(0, 6).map((car) => (
 <div
-key={car.id}
-style={{
-border:"1px solid #ddd",
-borderRadius:"10px",
-padding:"15px",
-cursor:"pointer",
-boxShadow:"0 4px 10px rgba(0,0,0,0.1)"
-}}
-onClick={()=>navigate(`/car/${car.id}`)}
+  key={car.id}
+  onClick={() => navigate(`/car/${car.id}`)}
+  style={{
+    width: "400px",
+    maxWidth: "90%",
+    border: "1px solid #ddd",
+    borderRadius: "10px",
+    padding: "15px",
+    cursor: "pointer",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+    textAlign: "center"
+  }}
 >
 
-<img
-src={`http://localhost:8084/images/${car.image}`}
-alt={car.name}
-style={{width:"100%",height:"200px",objectFit:"cover"}}
-/>
+  <img
+    src={car.image}
+    alt={car.name}
+    style={{
+      width: "100%",
+      height: "180px",
+      objectFit: "contain",
+      backgroundColor: "#f5f5f5",
+      borderRadius: "10px"
+    }}
+  />
 
-<h3>{car.name}</h3>
-<p>${car.price}</p>
+  <h3 style={{ marginTop: "10px" }}>{car.name}</h3>
+  <p style={{ fontWeight: "bold" }}>${car.price}</p>
+
 
 </div>
+
 
 ))}
 
 </div>
-
 </div>
+
 );
 }
 
