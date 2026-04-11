@@ -8,8 +8,15 @@ function ViewTestDrives() {
   const navigate = useNavigate();
 
   const fetchRequests = () => {
-    fetch("http://localhost:8084/api/test-drives", { credentials: "include" })
-      .then((res) => res.json())
+    fetch("http://localhost:8084/api/test-drives", {
+      credentials: "include"
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch requests: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => setRequests(data))
       .catch((error) =>
         console.error("Error fetching test drive requests:", error)
@@ -27,15 +34,25 @@ function ViewTestDrives() {
       const response = await fetch(
         `http://localhost:8084/api/test-drives/${id}/status?status=${newStatus}`,
         {
-          method: "PATCH"
+          method: "PATCH",
+          credentials: "include"
         }
       );
 
-      const result = await response.json();
+      let result = {};
+      try {
+        result = await response.json();
+      } catch {
+        result = {};
+      }
 
       if (response.ok) {
         setMessage(`Request ${newStatus.toLowerCase()} successfully.`);
         fetchRequests();
+      } else if (response.status === 403) {
+        setMessage("Forbidden: admin authentication is required.");
+      } else if (response.status === 401) {
+        setMessage("Unauthorized: please log in again.");
       } else {
         setMessage(result.message || "Failed to update status.");
       }

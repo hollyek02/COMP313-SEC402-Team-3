@@ -1,25 +1,17 @@
 package com.dealership.service;
 
-
+import com.dealership.model.Admin;
 import com.dealership.repository.AdminRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.dealership.model.Admin;
+
 @Service
 public class AdminService {
 
     @Autowired
     private AdminRepository adminRepository;
 
-    public boolean validateAdmin(String username, String password) {
-
-        return adminRepository.findByUsernameAndPassword(username, password).isPresent();
-    }
-    
-    
     public Admin findAdmin(String username) {
-
-        return adminRepository.findByUsername(username);
+        return adminRepository.findByUsername(username).orElse(null);
     }
 }

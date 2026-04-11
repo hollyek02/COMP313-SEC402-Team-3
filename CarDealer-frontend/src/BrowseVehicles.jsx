@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 
 function BrowseVehicles() {
-
   const [cars, setCars] = useState([]);
   const [filteredCars, setFilteredCars] = useState([]);
 
@@ -16,38 +15,33 @@ function BrowseVehicles() {
 
   useEffect(() => {
     fetch("http://localhost:8084/api/cars")
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setCars(data);
         setFilteredCars(data);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
 
-  // 🔍 FILTER LOGIC
   useEffect(() => {
     let filtered = cars;
 
-    // search by name
     if (search) {
-      filtered = filtered.filter(car =>
+      filtered = filtered.filter((car) =>
         car.name.toLowerCase().includes(search.toLowerCase())
       );
     }
 
-    // filter by price
     if (maxPrice) {
-      filtered = filtered.filter(car =>
-        parseFloat(car.price) <= parseFloat(maxPrice)
+      filtered = filtered.filter(
+        (car) => parseFloat(car.price) <= parseFloat(maxPrice)
       );
     }
 
     setFilteredCars(filtered);
-    setCurrentPage(1); // reset page after filtering
-
+    setCurrentPage(1);
   }, [search, maxPrice, cars]);
 
-  // 📄 PAGINATION
   const indexOfLast = currentPage * carsPerPage;
   const indexOfFirst = indexOfLast - carsPerPage;
   const currentCars = filteredCars.slice(indexOfFirst, indexOfLast);
@@ -56,21 +50,20 @@ function BrowseVehicles() {
 
   return (
     <div>
-
       <Navbar />
 
       <h2 style={{ textAlign: "center", marginTop: "20px" }}>
         Browse Vehicles
       </h2>
 
-      {/* 🔍 SEARCH + FILTER */}
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: "20px",
-        margin: "20px"
-      }}>
-
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          margin: "20px"
+        }}
+      >
         <input
           type="text"
           placeholder="Search by name..."
@@ -86,25 +79,20 @@ function BrowseVehicles() {
           onChange={(e) => setMaxPrice(e.target.value)}
           style={{ padding: "8px", width: "150px" }}
         />
-
       </div>
 
-      {/* 🚗 CAR LIST */}
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "20px",
-        padding: "20px",
-        
-       
-        
-      }}>
-
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "20px",
+          padding: "20px"
+        }}
+      >
         {currentCars.length === 0 && <p>No vehicles found</p>}
 
-        {currentCars.map(car => (
-
+        {currentCars.map((car) => (
           <div
             key={car.id}
             onClick={() => navigate(`/car/${car.id}`)}
@@ -115,39 +103,38 @@ function BrowseVehicles() {
               padding: "15px",
               cursor: "pointer",
               boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-              textAlign: "center",
-              
+              textAlign: "center"
             }}
           >
-
             <img
-              src={car.image}
+              src={`http://localhost:8084/images/${car.image}`}
               alt={car.name}
               style={{
-  width: "100%",
-  height: "300px",
-  objectFit: "contain",
-  objectPosition: "center",
-  backgroundColor: "#f5f5f5",
-  padding: "2px",
-  borderRadius: "2px"
-}}
+                width: "100%",
+                height: "300px",
+                objectFit: "contain",
+                objectPosition: "center",
+                backgroundColor: "#f5f5f5",
+                padding: "2px",
+                borderRadius: "2px"
+              }}
             />
 
             <h3>{car.name}</h3>
-            <p>Price: ${car.price}</p>
-
+            <p>
+              Price:{" "}
+              {Number(car.price).toLocaleString("en-CA", {
+                style: "currency",
+                currency: "CAD"
+              })}
+            </p>
           </div>
-
         ))}
-
       </div>
 
-      {/* ⏮️ PAGINATION CONTROLS */}
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
-
         <button
-          onClick={() => setCurrentPage(prev => prev - 1)}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
           disabled={currentPage === 1}
           style={{
             margin: "5px",
@@ -163,7 +150,7 @@ function BrowseVehicles() {
         </span>
 
         <button
-          onClick={() => setCurrentPage(prev => prev + 1)}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
           disabled={currentPage === totalPages || totalPages === 0}
           style={{
             margin: "5px",
@@ -173,9 +160,7 @@ function BrowseVehicles() {
         >
           Next
         </button>
-
       </div>
-
     </div>
   );
 }

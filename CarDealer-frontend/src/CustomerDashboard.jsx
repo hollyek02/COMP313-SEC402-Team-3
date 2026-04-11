@@ -171,7 +171,7 @@ function CustomerDashboard() {
       <Navbar />
 
       <div style={styles.page}>
-        <h1 style={styles.heading}>Customer Dashboard</h1>
+        <h1 style={styles.heading}>My Dashboard</h1>
 
         <div style={styles.grid}>
           <div style={styles.card}>
