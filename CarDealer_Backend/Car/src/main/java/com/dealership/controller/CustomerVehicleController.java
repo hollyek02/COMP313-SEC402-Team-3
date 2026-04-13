@@ -3,7 +3,10 @@ package com.dealership.controller;
 import com.dealership.model.Car;
 import com.dealership.model.CustomerVehicle;
 import com.dealership.service.CustomerVehicleService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.dealership.dto.CustomerVehicleDTO;
 
 import java.util.List;
 
@@ -27,4 +30,10 @@ public class CustomerVehicleController {
     public List<Car> getOwnedCars(@PathVariable String email) {
         return customerVehicleService.getOwnedCarsByEmail(email);
     }
+
+    @PostMapping
+public ResponseEntity<String> addCustomerVehicle(@RequestBody CustomerVehicleDTO dto) {
+    customerVehicleService.saveCustomerVehicle(dto.getCustomerEmail(), dto.getCarId());
+    return ResponseEntity.ok("Vehicle added successfully");
+}
 }

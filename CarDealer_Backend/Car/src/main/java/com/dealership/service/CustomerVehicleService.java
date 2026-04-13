@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 @Service
 public class CustomerVehicleService {
@@ -37,4 +38,14 @@ public class CustomerVehicleService {
 
         return ownedCars;
     }
+
+public void saveCustomerVehicle(String customerEmail, Long carId) {
+    CustomerVehicle customerVehicle = new CustomerVehicle();
+    customerVehicle.setCustomerEmail(customerEmail);
+    customerVehicle.setCarId(carId);
+    customerVehicle.setPurchaseDate(LocalDate.now());
+    customerVehicle.setStatus("ACTIVE");
+    customerVehicleRepository.save(customerVehicle);
+}
+
 }

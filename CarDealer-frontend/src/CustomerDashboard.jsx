@@ -21,6 +21,9 @@ function CustomerDashboard() {
   const [serviceMessage, setServiceMessage] = useState("");
   const [serviceBookings, setServiceBookings] = useState([]);
 
+  const [allCars, setAllCars] = useState([]);
+const [addVehicleForm, setAddVehicleForm] = useState({ carId: "" });
+
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
 
@@ -42,6 +45,11 @@ function CustomerDashboard() {
         console.error("Error fetching owned vehicles:", error);
         setLoadingCars(false);
       });
+
+fetch(`${API_BASE}/api/cars`)
+  .then((res) => res.json())
+  .then(setAllCars)
+  .catch((error) => console.error("Error fetching cars:", error));
 
     fetch(`${API_BASE}/api/service-bookings/${parsedUser.email}`)
       .then((res) => res.json())
@@ -158,6 +166,38 @@ function CustomerDashboard() {
     }
   };
 
+  const handleAddVehicle = async (e) => {
+  e.preventDefault();
+
+  if (!user || !addVehicleForm.carId) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/customer-vehicles`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        customerEmail: user.email,
+        carId: Number(addVehicleForm.carId)
+      })
+    });
+
+    if (response.ok) {
+      const updatedCars = await fetch(`${API_BASE}/api/customer-vehicles/${user.email}`);
+      const carsData = await updatedCars.json();
+      setOwnedCars(carsData);
+      setAddVehicleForm({ carId: "" });
+      alert("Vehicle added to your profile!");
+    } else {
+      alert("Failed to add vehicle.");
+    }
+  } catch (error) {
+    console.error("Error adding vehicle:", error);
+    alert("Error adding vehicle.");
+  }
+};
+
   if (!user) {
     return <h2 style={{ padding: "40px" }}>Loading dashboard...</h2>;
   }
@@ -209,6 +249,33 @@ function CustomerDashboard() {
               </div>
             )}
           </div>
+
+<div style={{ ...styles.card, gridColumn: "1 / span 2" }}>
+  <h2 style={styles.cardTitle}>Add My Vehicle</h2>
+
+  <form onSubmit={handleAddVehicle} style={styles.form}>
+    <select
+      name="carId"
+      value={addVehicleForm.carId}
+      onChange={(e) =>
+        setAddVehicleForm({ ...addVehicleForm, carId: e.target.value })
+      }
+      required
+      style={styles.input}
+    >
+      <option value="">Select from Dealership Inventory</option>
+      {allCars.map((car) => (
+        <option key={car.id} value={car.id}>
+          {car.name} (${Number(car.price).toFixed(0)})
+        </option>
+      ))}
+    </select>
+
+    <button type="submit" style={styles.button}>
+      Add My Vehicle
+    </button>
+  </form>
+</div>
 
           <div style={{ ...styles.card, gridColumn: "1 / span 2" }}>
             <h2 style={styles.cardTitle}>Service Booking</h2>
