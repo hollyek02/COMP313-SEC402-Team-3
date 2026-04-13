@@ -26,6 +26,7 @@ const [addVehicleForm, setAddVehicleForm] = useState({ carId: "" });
 
 const [chatMessages, setChatMessages] = useState([]);
 const [newMessage, setNewMessage] = useState("");
+const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
@@ -454,64 +455,66 @@ const handleSendMessage = async (e) => {
                 </tbody>
               </table>
             )}
-          </div>
-                    <div style={{ ...styles.card, gridColumn: "1 / span 2" }}>
-            <h2 style={styles.cardTitle}>Customer Support Chat</h2>
-
-            <div
-              style={{
-                height: "250px",
-                overflowY: "auto",
-                border: "1px solid #ccc",
-                padding: "10px",
-                marginBottom: "10px",
-                background: "#f9f9f9",
-                borderRadius: "6px"
-              }}
-            >
-              {chatMessages.length === 0 ? (
-                <p>No messages yet. Start a conversation with our team.</p>
-              ) : (
-                chatMessages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    style={{
-                      marginBottom: "10px",
-                      padding: "10px",
-                      background: "#e3f2fd",
-                      borderRadius: "6px"
-                    }}
-                  >
-                    <small>
-                      {msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}
-                    </small>
-                    <p style={{ margin: "5px 0 0 0" }}>{msg.message}</p>
-                    {msg.status === "PENDING" && (
-                      <span style={{ color: "orange", fontSize: "12px" }}>
-                        Unread
-                      </span>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-
-            <form onSubmit={handleSendMessage} style={{ display: "flex", gap: "10px" }}>
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message..."
-                style={{ ...styles.input, flex: 1 }}
-                required
-              />
-              <button type="submit" style={styles.button}>
-                Send
-              </button>
-            </form>
-          </div>
-        </div>
+          </div>                   
+         </div>
       </div>
+
+      <button
+        onClick={() => setShowChat(!showChat)}
+        style={styles.chatToggleButton}
+      >
+        💬 {showChat ? "Close" : "Chat"}
+      </button>
+
+      {showChat && (
+        <div style={styles.chatPopup}>
+          <div style={styles.chatHeader}>
+            <h3 style={{ margin: 0, color: "white" }}>Support Chat</h3>
+            <button
+              onClick={() => setShowChat(false)}
+              style={styles.chatCloseButton}
+            >
+              ×
+            </button>
+          </div>
+
+          <div style={styles.chatBody}>
+            {chatMessages.length === 0 ? (
+              <p style={{ padding: "10px", opacity: 0.7 }}>
+                Start a conversation with our team
+              </p>
+            ) : (
+              chatMessages.map((msg) => (
+                <div key={msg.id} style={styles.chatMessage}>
+                  <small style={{ opacity: 0.7 }}>
+                    {msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}
+                  </small>
+                  <p>{msg.message}</p>
+                  {msg.status === "PENDING" && (
+                    <span style={{ color: "orange", fontSize: "12px" }}>
+                      (Unread)
+                    </span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          <form onSubmit={handleSendMessage} style={styles.chatForm}>
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type message..."
+              style={styles.chatInput}
+              required
+            />
+            <button type="submit" style={styles.button}>
+              Send
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
@@ -604,6 +607,83 @@ const styles = {
     border: "1px solid #ccc",
     padding: "10px",
     textAlign: "left"
+  },
+  chatToggleButton: {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    width: "60px",
+    height: "60px",
+    borderRadius: "50%",
+    background: "#e4002b",
+    color: "white",
+    border: "none",
+    fontSize: "16px",
+    cursor: "pointer",
+    boxShadow: "0 4px 20px rgba(228,0,43,0.4)",
+    zIndex: 1000
+  },
+  chatPopup: {
+    position: "fixed",
+    bottom: "90px",
+    right: "20px",
+    width: "320px",
+    maxHeight: "500px",
+    background: "white",
+    borderRadius: "12px",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
+    display: "flex",
+    flexDirection: "column",
+    zIndex: 1000,
+    overflow: "hidden"
+  },
+  chatHeader: {
+    background: "#e4002b",
+    color: "white",
+    padding: "15px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  chatCloseButton: {
+    background: "none",
+    border: "none",
+    color: "white",
+    fontSize: "24px",
+    cursor: "pointer",
+    width: "30px",
+    height: "30px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  chatBody: {
+    flex: 1,
+    padding: "15px",
+    background: "#f9f9f9",
+    overflowY: "auto",
+    maxHeight: "350px"
+  },
+  chatMessage: {
+    background: "white",
+    marginBottom: "10px",
+    padding: "12px",
+    borderRadius: "8px",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+  },
+  chatForm: {
+    display: "flex",
+    padding: "12px",
+    gap: "8px",
+    borderTop: "1px solid #eee"
+  },
+  chatInput: {
+    flex: 1,
+    padding: "10px 12px",
+    border: "1px solid #ddd",
+    borderRadius: "20px",
+    fontSize: "14px",
+    outline: "none"
   }
 };
 
