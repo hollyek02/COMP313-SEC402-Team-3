@@ -103,7 +103,7 @@ public class AdminLoginController {
         // Clear JWT cookie
         ResponseCookie cookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
-                .secure(false) // change to true in production (HTTPS)
+                .secure(true) // change to true in production (HTTPS)
                 .path("/")
                 .maxAge(0) // THIS deletes the cookie
                 .sameSite("None")
