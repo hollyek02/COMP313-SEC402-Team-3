@@ -254,11 +254,16 @@ const response = await fetch(`${API_BASE}/api/cars/${id}`, {
                                     <td style={cellStyle}>{car.name}</td>
                                     <td style={cellStyle}>${car.price}</td>
                                     <td style={cellStyle}>
-    <img 
-        src={car.image} 
-        alt={car.name}
-        style={{ width: "100px", height: "60px", objectFit: "cover" }}
-    />
+  <img
+    src={car.image?.startsWith("http")
+      ? car.image
+      : `https://comp313-car-images.s3.amazonaws.com/${car.image}`}
+    alt={car.name}
+    style={{ width: "100px", height: "60px", objectFit: "cover", borderRadius: "4px" }}
+    onError={(e) => {
+      e.target.style.display = "none";
+    }}
+  />
 </td>
                                     <td style={cellStyle}>{car.description}</td>
                                     <td style={cellStyle}>

@@ -101,8 +101,21 @@ function ViewInquiries() {
           </option>
         </select>
       </td>
-      <td style={{ ...cellStyle, textAlign:"center"}}>
-  <button style={{ border:"1px solid black"}} onClick={() => navigate(`/customer-inquiry/${inquiry.id}`)}>View</button>
+      <td style={{ ...cellStyle, textAlign: "center" }}>
+  <button
+    onClick={() => navigate(`/customer-inquiry/${inquiry.id}`)}
+    style={{
+      padding: "8px 16px",
+      background: "#e4002b",
+      color: "white",
+      border: "none",
+      borderRadius: "6px",
+      cursor: "pointer",
+      fontWeight: "bold"
+    }}
+  >
+    View
+  </button>
 </td>
     </tr>
   ))}
