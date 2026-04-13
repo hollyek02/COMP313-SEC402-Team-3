@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
+import { API_BASE } from "./apiConfig";
+
 function ManageVehicles() {
     const [cars, setCars] = useState([]);
     const [formData, setFormData] = useState({
@@ -13,12 +15,13 @@ function ManageVehicles() {
 
     const [editingId, setEditingId] = useState(null);
 
-    const fetchCars = () => {
-        fetch("http://localhost:8084/api/cars",{credentials: "include"})
-            .then((res) => res.json())
-            .then((data) => setCars(data))
-            .catch((error) => console.error("Error fetching cars:", error));
-    };
+const fetchCars = () => {
+  fetch(`${API_BASE}/api/cars`, { credentials: "include" })
+    .then((res) => res.json())
+    .then((data) => setCars(data))
+    .catch((error) => console.error("Error fetching cars:", error));
+};
+
 
     useEffect(() => {
         fetchCars();
@@ -34,9 +37,9 @@ function ManageVehicles() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = editingId
-        ? `http://localhost:8084/api/cars/${editingId}`
-        : "http://localhost:8084/api/cars";
+const url = editingId
+  ? `${API_BASE}/api/cars/${editingId}`
+  : `${API_BASE}/api/cars`;
 
     const method = editingId ? "PUT" : "POST";
 
@@ -109,9 +112,10 @@ function ManageVehicles() {
         if (!confirmed) return;
 
         try {
-            const response = await fetch(`http://localhost:8084/api/cars/${id}`, {
-                method: "DELETE",credentials: "include"
-            });
+const response = await fetch(`${API_BASE}/api/cars/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+});
 
             if (response.ok) {
                 fetchCars();

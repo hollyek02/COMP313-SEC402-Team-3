@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
+import { API_BASE } from "./apiConfig";
 
 function CarDetails() {
   const { id } = useParams();
   const [car, setCar] = useState(null);
 
-  useEffect(() => {
-    fetch(`http://localhost:8084/api/cars/${id}`)
-      .then((res) => res.json())
-      .then((data) => setCar(data))
-      .catch((error) => console.error("Error fetching car:", error));
-  }, [id]);
+useEffect(() => {
+  fetch(`${API_BASE}/api/cars/${id}`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Car details:", data);  
+      setCar(data);
+    })
+    .catch((error) => console.error("Error fetching car:", error));
+}, [id]);
 
   if (!car) return <h2>Loading...</h2>;
 
@@ -26,17 +30,17 @@ function CarDetails() {
     flexDirection: "column",}}>
         <h1>{car.name}</h1>
 
-        <img
-          src={car.image}
-          alt={car.name}
-          style={{
-            width: "100%",
-            maxWidth: "500px",
-            height: "300px",
-            objectFit: "cover",
-            borderRadius: "10px"
-          }}
-        />
+<img
+  src={`${API_BASE}/images/${car.image}`}
+  alt={car.name}
+  style={{
+    width: "100%",
+    maxWidth: "500px",
+    height: "300px",
+    objectFit: "cover",
+    borderRadius: "10px",
+  }}
+/>
 
         <h2>Price: ${car.price}</h2>
         {/* Description section */}

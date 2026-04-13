@@ -1,5 +1,6 @@
 
 import { createContext, useState, useEffect, useContext } from "react";
+import { API_BASE } from "./apiConfig";
 
 export const AuthContext = createContext();
 
@@ -8,20 +9,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Fetch user (validate cookie with backend)
-  const fetchUser = async () => {
+const fetchUser = async () => {
   console.log("Checking auth...");
   try {
-    const res = await fetch("http://localhost:8084/api/admin/check", {
+    const response = await fetch(`${API_BASE}/api/admin/check`, {
       credentials: "include",
     });
 
-    console.log("Status:", res.status);
+    console.log("Status:", response.status);
 
-    if (res.ok) {
-      const data = await res.json();
+    if (response.ok) {
+      const data = await response.json();
       console.log("User:", data);
       setUser(data);
     } else {
+      // 401 etc. → not logged in
       setUser(null);
     }
   } catch (err) {
@@ -33,20 +35,19 @@ export const AuthProvider = ({ children }) => {
   }
 };
 
- const logout = async () => {
-    try {
-      await fetch("http://localhost:8084/api/admin/logout", {
-        method: "POST", // or GET depending on backend
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error("Logout error:", err);
-    } finally {
-      // clear user on frontend no matter what
-      setUser(null);
-    }
-  };
-
+const logout = async () => {
+  try {
+    await fetch(`${API_BASE}/api/admin/logout`, {
+      method: "POST", // or GET depending on backend
+      credentials: "include",
+    });
+  } catch (err) {
+    console.error("Logout error:", err);
+  } finally {
+    // clear user on frontend no matter what
+    setUser(null);
+  }
+};
 
   useEffect(() => {
     fetchUser();

@@ -4,6 +4,7 @@ import StatsCard from "./StatsCard";
 import InquiriesTable from "./InquiriesTable";
 import TestDriveTable from "./TestDriveTable";
 import "./admindashboard.css";
+import { API_BASE } from "./apiConfig";
 
 const Dashboard = () => {
   const [cars, setCars] = useState([]);
@@ -14,12 +15,12 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [carsResponse, inquiriesResponse, testDrivesResponse] =
-          await Promise.all([
-            fetch("http://localhost:8084/api/cars", { credentials: "include" }),
-            fetch("http://localhost:8084/api/inquiries", { credentials: "include" }),
-            fetch("http://localhost:8084/api/test-drives", { credentials: "include" })
-          ]);
+const [carsResponse, inquiriesResponse, testDrivesResponse] =
+  await Promise.all([
+    fetch(`${API_BASE}/api/cars`, { credentials: "include" }),
+    fetch(`${API_BASE}/api/inquiries`, { credentials: "include" }),
+    fetch(`${API_BASE}/api/test-drives`, { credentials: "include" }),
+  ]);
 
         const carsData = await carsResponse.json();
         const inquiriesData = await inquiriesResponse.json();

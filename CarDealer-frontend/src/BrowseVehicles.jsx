@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "./apiConfig";
 
 function BrowseVehicles() {
   const [cars, setCars] = useState([]);
@@ -13,15 +14,15 @@ function BrowseVehicles() {
   const carsPerPage = 6;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("http://localhost:8084/api/cars")
-      .then((res) => res.json())
-      .then((data) => {
-        setCars(data);
-        setFilteredCars(data);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+useEffect(() => {
+  fetch(`${API_BASE}/api/cars`)
+    .then((res) => res.json())
+    .then((data) => {
+      setCars(data);
+      setFilteredCars(data);
+    })
+    .catch((err) => console.error(err));
+}, []);
 
   useEffect(() => {
     let filtered = cars;
@@ -107,7 +108,7 @@ function BrowseVehicles() {
             }}
           >
             <img
-              src={`http://localhost:8084/images/${car.image}`}
+              src={`${API_BASE}/images/${car.image}`}
               alt={car.name}
               style={{
                 width: "100%",
