@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
-import { API_BASE } from "../apiConfig";
+import { API_BASE } from "./apiConfig";
 
 function TestDriveRequest() {
   const { id } = useParams(); // get clicked request ID

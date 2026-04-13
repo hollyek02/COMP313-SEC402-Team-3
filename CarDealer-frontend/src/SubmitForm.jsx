@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
-import { API_BASE } from "../apiConfig";
+import { API_BASE } from "./apiConfig";
 
 const SubmitForm = () => {
   const { id } = useParams(); // get carId from URL params
