@@ -101,7 +101,7 @@ public class AdminLoginController {
         System.out.println("Logout request received");
 
         // Clear JWT cookie
-        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+        ResponseCookie cookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
                 .secure(false) // change to true in production (HTTPS)
                 .path("/")
