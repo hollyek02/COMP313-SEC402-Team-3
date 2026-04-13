@@ -25,6 +25,7 @@ import com.dealership.dto.AdminResponseDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
+import org.springframework.web.bind.annotation.CookieValue;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -45,10 +46,6 @@ public class AdminLoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/hash-test")
-public String hashTest() {
-    return passwordEncoder.encode("admin123");
-}
     
 
    
@@ -125,19 +122,31 @@ public String hashTest() {
     
     
     
-    @GetMapping("/check")
-    public ResponseEntity<?> check(Authentication auth) {
-        if (auth == null || !auth.isAuthenticated()) {
+@GetMapping("/check")
+public ResponseEntity<?> check(
+        @CookieValue(value = "access_token", required = false) String token) {
+
+    try {
+        if (token == null || token.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-	    Admin admin = adminService.findAdmin(userDetails.getUsername());
+
+        String username = jwtUtil.validateAccessToken(token);
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Admin admin = adminService.findAdmin(username);
+        if (admin == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         return ResponseEntity.ok(Map.of(
-	            "id", admin.getId(),
-	            "name", admin.getUsername()
-	            
-	    ));
+                "id", admin.getId(),
+                "name", admin.getUsername()
+        ));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+}
 }
