@@ -109,7 +109,7 @@ public class JwtUtil {
 	                .secure(false)
 	                .path("/")
 	                .maxAge(60 * 10)
-	                .sameSite("Lax")
+	                .sameSite("None")
 	                .build();
 	    }
 

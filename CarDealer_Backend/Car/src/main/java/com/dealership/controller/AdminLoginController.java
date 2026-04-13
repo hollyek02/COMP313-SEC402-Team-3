@@ -106,7 +106,7 @@ public class AdminLoginController {
                 .secure(false) // change to true in production (HTTPS)
                 .path("/")
                 .maxAge(0) // THIS deletes the cookie
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
