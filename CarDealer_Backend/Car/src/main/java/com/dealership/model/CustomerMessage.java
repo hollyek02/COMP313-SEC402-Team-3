@@ -23,6 +23,9 @@ public class CustomerMessage {
     @Column(nullable = false)
     private String status = "PENDING";
 
+    @Column(nullable = false, length = 20)
+    private String sender = "CUSTOMER";
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {
@@ -30,6 +33,9 @@ public class CustomerMessage {
         }
         if (status == null) {
             status = "PENDING";
+        }
+            if (sender == null) {
+        sender = "CUSTOMER";
         }
     }
 
@@ -65,7 +71,15 @@ public class CustomerMessage {
         return status;
     }
 
+    public String getSender() {
+    return sender;
+}
+
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public void setSender(String sender) {
+    this.sender = sender;
+}
 }

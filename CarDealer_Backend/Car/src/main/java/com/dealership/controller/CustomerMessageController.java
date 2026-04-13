@@ -30,6 +30,14 @@ public class CustomerMessageController {
     public List<Map<String, Object>> getMessages(@PathVariable String email) {
         return customerMessageService.getMessagesByEmail(email);
     }
+    
+@PostMapping("/reply")
+public ResponseEntity<String> sendAdminReply(@RequestBody Map<String, String> payload) {
+    String customerEmail = payload.get("customerEmail");
+    String message = payload.get("message");
+    customerMessageService.saveAdminReply(customerEmail, message);
+    return ResponseEntity.ok("Reply sent successfully");
+}
 
     @GetMapping
     public List<Map<String, Object>> getAllMessages() {

@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [testDrives, setTestDrives] = useState([]);
   const [loading, setLoading] = useState(true);
   const [adminMessages, setAdminMessages] = useState([]);
+  const [replyInput, setReplyInput] = useState({});
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -54,6 +55,37 @@ const [carsResponse, inquiriesResponse, testDrivesResponse, messagesResponse] =
       console.error("Error fetching admin messages:", error);
     }
   };
+
+  const handleSendReply = async (customerEmail, message) => {
+  if (!message || message.trim() === "") return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/customer-messages/reply`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        customerEmail,
+        message: message.trim()
+      })
+    });
+
+    if (response.ok) {
+      // Clear input for this customer
+      setReplyInput({
+        ...replyInput,
+        [customerEmail]: ""
+      });
+      fetchAdminMessages(); // Refresh admin table
+    } else {
+      console.error("Failed to send reply.");
+    }
+  } catch (error) {
+    console.error("Error sending reply:", error);
+  }
+};
 
   const handleMarkAsRead = async (id) => {
     try {
@@ -168,37 +200,76 @@ const [carsResponse, inquiriesResponse, testDrivesResponse, messagesResponse] =
             </td>
             <td>{msg.status}</td>
             <td>
-              {msg.status !== "READ" && (
-                <button
-                  onClick={() => handleMarkAsRead(msg.id)}
-                  style={{
-                    background: "#2e7d32",
-                    color: "white",
-                    border: "none",
-                    padding: "8px 12px",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    marginRight: "8px"
-                  }}
-                >
-                  Mark Read
-                </button>
-              )}
+  {msg.status !== "READ" && (
+    <button
+      onClick={() => handleMarkAsRead(msg.id)}
+      style={{
+        background: "#2e7d32",
+        color: "white",
+        border: "none",
+        padding: "8px 12px",
+        borderRadius: "6px",
+        cursor: "pointer",
+        marginRight: "8px"
+      }}
+    >
+      Mark Read
+    </button>
+  )}
 
-              <button
-                onClick={() => handleDeleteMessage(msg.id)}
-                style={{
-                  background: "#c62828",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 12px",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Delete
-              </button>
-            </td>
+  <input
+    type="text"
+    placeholder="Type reply..."
+    value={replyInput[msg.customerEmail] || ""}
+    onChange={(e) => setReplyInput({
+      ...replyInput,
+      [msg.customerEmail]: e.target.value
+    })}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        handleSendReply(msg.customerEmail, e.target.value);
+      }
+    }}
+    style={{
+      border: "1px solid #ddd",
+      borderRadius: "4px",
+      padding: "6px 8px",
+      fontSize: "14px",
+      width: "120px",
+      marginRight: "8px"
+    }}
+  />
+
+  <button
+    onClick={() => handleSendReply(msg.customerEmail, replyInput[msg.customerEmail])}
+    style={{
+      background: "#1976d2",
+      color: "white",
+      border: "none",
+      padding: "6px 10px",
+      borderRadius: "4px",
+      cursor: "pointer",
+      fontSize: "12px"
+    }}
+  >
+    Reply
+  </button>
+
+  <button
+    onClick={() => handleDeleteMessage(msg.id)}
+    style={{
+      background: "#c62828",
+      color: "white",
+      border: "none",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      cursor: "pointer",
+      marginLeft: "8px"
+    }}
+  >
+    Delete
+  </button>
+</td>
           </tr>
         ))}
       </tbody>
