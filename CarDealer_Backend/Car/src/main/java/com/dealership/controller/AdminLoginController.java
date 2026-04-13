@@ -44,6 +44,11 @@ public class AdminLoginController {
     private JwtUtil jwtUtil;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @GetMapping("/hash-test")
+public String hashTest() {
+    return passwordEncoder.encode("admin123");
+}
     
 
    
