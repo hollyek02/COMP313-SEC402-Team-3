@@ -24,6 +24,9 @@ function CustomerDashboard() {
   const [allCars, setAllCars] = useState([]);
 const [addVehicleForm, setAddVehicleForm] = useState({ carId: "" });
 
+const [chatMessages, setChatMessages] = useState([]);
+const [newMessage, setNewMessage] = useState("");
+
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
 
@@ -57,6 +60,13 @@ fetch(`${API_BASE}/api/cars`)
       .catch((error) =>
         console.error("Error fetching service bookings:", error)
       );
+
+    fetch(`${API_BASE}/api/customer-messages/${parsedUser.email}`)
+  .then((res) => res.json())
+  .then((data) => setChatMessages(data))
+  .catch((error) =>
+    console.error("Error fetching chat messages:", error)
+  );
   }, [navigate]);
 
   const handleServiceChange = async (e) => {
@@ -195,6 +205,40 @@ fetch(`${API_BASE}/api/cars`)
   } catch (error) {
     console.error("Error adding vehicle:", error);
     alert("Error adding vehicle.");
+  }
+};
+
+const handleSendMessage = async (e) => {
+  e.preventDefault();
+
+  if (!user || !newMessage.trim()) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/customer-messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        customerEmail: user.email,
+        message: newMessage
+      })
+    });
+
+    if (response.ok) {
+      setNewMessage("");
+
+      const updatedMessages = await fetch(
+        `${API_BASE}/api/customer-messages/${user.email}`
+      );
+      const messagesData = await updatedMessages.json();
+      setChatMessages(messagesData);
+    } else {
+      alert("Failed to send message.");
+    }
+  } catch (error) {
+    console.error("Error sending message:", error);
+    alert("Error sending message.");
   }
 };
 
@@ -410,6 +454,61 @@ fetch(`${API_BASE}/api/cars`)
                 </tbody>
               </table>
             )}
+          </div>
+                    <div style={{ ...styles.card, gridColumn: "1 / span 2" }}>
+            <h2 style={styles.cardTitle}>Customer Support Chat</h2>
+
+            <div
+              style={{
+                height: "250px",
+                overflowY: "auto",
+                border: "1px solid #ccc",
+                padding: "10px",
+                marginBottom: "10px",
+                background: "#f9f9f9",
+                borderRadius: "6px"
+              }}
+            >
+              {chatMessages.length === 0 ? (
+                <p>No messages yet. Start a conversation with our team.</p>
+              ) : (
+                chatMessages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    style={{
+                      marginBottom: "10px",
+                      padding: "10px",
+                      background: "#e3f2fd",
+                      borderRadius: "6px"
+                    }}
+                  >
+                    <small>
+                      {msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}
+                    </small>
+                    <p style={{ margin: "5px 0 0 0" }}>{msg.message}</p>
+                    {msg.status === "PENDING" && (
+                      <span style={{ color: "orange", fontSize: "12px" }}>
+                        Unread
+                      </span>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            <form onSubmit={handleSendMessage} style={{ display: "flex", gap: "10px" }}>
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                style={{ ...styles.input, flex: 1 }}
+                required
+              />
+              <button type="submit" style={styles.button}>
+                Send
+              </button>
+            </form>
           </div>
         </div>
       </div>
