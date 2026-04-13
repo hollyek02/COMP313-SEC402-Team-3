@@ -30,4 +30,21 @@ public class CustomerMessageController {
     public List<Map<String, Object>> getMessages(@PathVariable String email) {
         return customerMessageService.getMessagesByEmail(email);
     }
+
+    @GetMapping
+    public List<Map<String, Object>> getAllMessages() {
+        return customerMessageService.getAllMessages();
+    }
+
+    @PatchMapping("/{id}/read")
+    public ResponseEntity<String> markMessageAsRead(@PathVariable Long id) {
+        customerMessageService.markAsRead(id);
+        return ResponseEntity.ok("Message marked as read");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
+        customerMessageService.deleteMessage(id);
+        return ResponseEntity.noContent().build();
+    }
 }

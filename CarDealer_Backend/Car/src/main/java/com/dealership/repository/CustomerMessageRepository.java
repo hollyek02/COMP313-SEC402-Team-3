@@ -8,4 +8,6 @@ import java.util.List;
 public interface CustomerMessageRepository extends JpaRepository<CustomerMessage, Long> {
 
     List<CustomerMessage> findByCustomerEmailOrderByCreatedAtAsc(String customerEmail);
+
+    List<CustomerMessage> findAllByOrderByCreatedAtDesc();
 }

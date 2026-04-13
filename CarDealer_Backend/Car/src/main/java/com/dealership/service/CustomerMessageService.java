@@ -35,4 +35,27 @@ public class CustomerMessageService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public List<Map<String, Object>> getAllMessages() {
+        return customerMessageRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(msg -> Map.<String, Object>of(
+                        "id", msg.getId(),
+                        "customerEmail", msg.getCustomerEmail(),
+                        "message", msg.getMessage(),
+                        "createdAt", msg.getCreatedAt(),
+                        "status", msg.getStatus()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public void markAsRead(Long id) {
+        CustomerMessage msg = customerMessageRepository.findById(id).orElseThrow();
+        msg.setStatus("READ");
+        customerMessageRepository.save(msg);
+    }
+
+    public void deleteMessage(Long id) {
+        customerMessageRepository.deleteById(id);
+    }
 }
