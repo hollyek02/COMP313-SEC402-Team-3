@@ -23,17 +23,15 @@ public class Inquiry {
    /* @Column(name = "car_id")
     private Long carId;*/
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+@Column(name = "created_at")
+private LocalDateTime createdAt;
+
+@Column(name = "status", nullable = false)
+private String status = "PENDING";
+
+public Inquiry() {
     
-    private String status;
-    
-    public Inquiry() {
-    }
-    
-    public Inquiry(String status) {
-    	this.status = "PENDING";
-    }
+}
 
     @PrePersist
     public void prePersist() {
