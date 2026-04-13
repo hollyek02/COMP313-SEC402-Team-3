@@ -36,6 +36,7 @@ const fetchCars = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("SUBMIT CLICKED");
 
 const url = editingId
   ? `${API_BASE}/api/cars/${editingId}`
@@ -190,10 +191,11 @@ const response = await fetch(`${API_BASE}/api/cars/${id}`, {
                         style={inputStyle}
                     />*/}
 
-     <input
-    type="file"
-    onChange={(e) => setFile(e.target.files[0])}
-    required={!editingId}
+<input
+  type="file"
+  name="file"
+  onChange={(e) => setFile(e.target.files?.[0] || null)}
+  required={!editingId}
 />
 
                     
