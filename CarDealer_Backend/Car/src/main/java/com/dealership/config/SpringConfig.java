@@ -58,7 +58,8 @@ public class SpringConfig {
 
         config.setAllowedOrigins(List.of(
     "http://localhost:5173",
-    "https://comp-313-sec-402-team-3.vercel.app"
+    "https://comp-313-sec-402-team-3.vercel.app",
+    "https://comp-313-sec-402-team-3-dh61i8iuv-hollyek02s-projects.vercel.app"
 ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
