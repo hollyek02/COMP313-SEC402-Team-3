@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import { API_BASE } from "./apiConfig";
 
 function CustomerDashboard() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function CustomerDashboard() {
     const parsedUser = JSON.parse(storedUser);
     setUser(parsedUser);
 
-    fetch(`http://localhost:8084/api/customer-vehicles/${parsedUser.email}`)
+    fetch(`${API_BASE}/api/customer-vehicles/${parsedUser.email}`)
       .then((res) => res.json())
       .then((data) => {
         setOwnedCars(data);
@@ -42,7 +43,7 @@ function CustomerDashboard() {
         setLoadingCars(false);
       });
 
-    fetch(`http://localhost:8084/api/service-bookings/${parsedUser.email}`)
+    fetch(`${API_BASE}/api/service-bookings/${parsedUser.email}`)
       .then((res) => res.json())
       .then((data) => setServiceBookings(data))
       .catch((error) =>
@@ -62,9 +63,7 @@ function CustomerDashboard() {
 
       if (value) {
         try {
-          const response = await fetch(
-            `http://localhost:8084/api/service-bookings/available-slots?date=${value}`
-          );
+          const response = await fetch(`${API_BASE}/api/service-bookings/available-slots?date=${value}`);
           const slots = await response.json();
           setAvailableSlots(slots);
         } catch (error) {
@@ -100,7 +99,7 @@ function CustomerDashboard() {
     };
 
     try {
-      const response = await fetch("http://localhost:8084/api/service-bookings", {
+      const response = await fetch(`${API_BASE}/api/service-bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -121,8 +120,7 @@ function CustomerDashboard() {
         });
         setAvailableSlots([]);
 
-        const updatedBookings = await fetch(
-          `http://localhost:8084/api/service-bookings/${user.email}`
+        const updatedBookings = await fetch(`${API_BASE}/api/service-bookings/${user.email}`
         );
         const bookingsData = await updatedBookings.json();
         setServiceBookings(bookingsData);
@@ -137,8 +135,7 @@ function CustomerDashboard() {
 
   const handleCancelBooking = async (id) => {
     try {
-      const response = await fetch(
-        `http://localhost:8084/api/service-bookings/cancel/${id}`,
+      const response = await fetch(`${API_BASE}/api/service-bookings/cancel/${id}`,
         {
           method: "PATCH"
         }
@@ -147,8 +144,7 @@ function CustomerDashboard() {
       if (response.ok) {
         setServiceMessage("Booking cancelled successfully.");
 
-        const updatedBookings = await fetch(
-          `http://localhost:8084/api/service-bookings/${user.email}`
+        const updatedBookings = await fetch(`${API_BASE}/api/service-bookings/${user.email}`
         );
         const bookingsData = await updatedBookings.json();
         setServiceBookings(bookingsData);
@@ -201,8 +197,7 @@ function CustomerDashboard() {
               <div style={styles.vehicleGrid}>
                 {ownedCars.map((car) => (
                   <div key={car.id} style={styles.vehicleCard}>
-                    <img
-                      src={`http://localhost:8084/images/${car.image}`}
+                    <img src={`${API_BASE}/images/${car.image}`}
                       alt={car.name}
                       style={styles.vehicleImage}
                     />

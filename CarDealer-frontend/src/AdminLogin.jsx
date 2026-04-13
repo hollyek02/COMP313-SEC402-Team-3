@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./AdminLogin.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import { API_BASE } from "./apiConfig";
 
 const AdminLogin = () => {
   const [username, setUsername] = useState("");
@@ -20,9 +21,9 @@ const AdminLogin = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8084/api/admin/login", {
-        method: "POST",
-        credentials: "include",
+      const response = await fetch(`${API_BASE}/api/admin/login`, {
+  method: "POST",
+  credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

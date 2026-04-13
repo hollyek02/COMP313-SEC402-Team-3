@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { API_BASE } from "./apiConfig";
 
 function CustomerInquiry() {
   const { id } = useParams(); // get the clicked inquiry id from URL
@@ -9,14 +10,17 @@ function CustomerInquiry() {
   const [inquiry, setInquiry] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8084/api/inquiries/${id}`, {credentials: "include"})
+    fetch(`${API_BASE}/api/inquiries/${id}`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setInquiry(data))
       .catch((err) => console.error(err));
   }, [id]);
 
   const handleDelete = () => {
-    fetch(`http://localhost:8084/api/inquiries/${id}`, { method: "DELETE",credentials: "include" })
+    fetch(`${API_BASE}/api/inquiries/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+})
       .then(() => navigate("/inquiries")) // go back to home after deletion
       .catch((err) => console.error(err));
   };

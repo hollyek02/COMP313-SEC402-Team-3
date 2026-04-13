@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "./apiConfig";
 
 function CustomerRegister() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ function CustomerRegister() {
     };
 
     try {
-      const response = await fetch("http://localhost:8084/api/users/register", {
+      const response = await fetch(`${API_BASE}/api/users/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

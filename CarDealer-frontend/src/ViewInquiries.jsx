@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "./apiConfig";
 
 
 
@@ -9,7 +10,7 @@ function ViewInquiries() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:8084/api/inquiries", {credentials: "include"})
+    fetch(`${API_BASE}/api/inquiries`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setInquiries(data))
       .catch((error) => console.error("Error fetching inquiries:", error));
@@ -61,10 +62,10 @@ function ViewInquiries() {
           onChange={(e) => {
             const newStatus = e.target.value;
 
-            fetch(
-              `http://localhost:8084/api/inquiries/${inquiry.id}/status?status=${newStatus}`,
-              { method: "PATCH",credentials: "include" }
-            )
+            fetch(`${API_BASE}/api/inquiries/${inquiry.id}/status?status=${newStatus}`, {
+  method: "PATCH",
+  credentials: "include",
+})
               .then(() => {
                 setInquiries((prev) =>
                   prev.map((i) =>

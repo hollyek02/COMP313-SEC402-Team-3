@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "./apiConfig";
 
 function ViewTestDrives() {
   const [requests, setRequests] = useState([]);
@@ -8,9 +9,7 @@ function ViewTestDrives() {
   const navigate = useNavigate();
 
   const fetchRequests = () => {
-    fetch("http://localhost:8084/api/test-drives", {
-      credentials: "include"
-    })
+   fetch(`${API_BASE}/api/test-drives`, { credentials: "include" })
       .then(async (res) => {
         if (!res.ok) {
           throw new Error(`Failed to fetch requests: ${res.status}`);
@@ -31,13 +30,10 @@ function ViewTestDrives() {
     setMessage("");
 
     try {
-      const response = await fetch(
-        `http://localhost:8084/api/test-drives/${id}/status?status=${newStatus}`,
-        {
-          method: "PATCH",
-          credentials: "include"
-        }
-      );
+      const response = await fetch(`${API_BASE}/api/test-drives/${id}/status?status=${newStatus}`, {
+  method: "PATCH",
+  credentials: "include",
+})
 
       let result = {};
       try {

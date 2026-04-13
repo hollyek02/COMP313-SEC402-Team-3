@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
+import { API_BASE } from "./apiConfig";
 
 const RequestTestDrive = () => {
   const { id } = useParams(); // ✅ Get car ID from URL
@@ -33,7 +34,7 @@ const RequestTestDrive = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8084/api/test-drives", {
+      const response = await fetch(`${API_BASE}/api/test-drives`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

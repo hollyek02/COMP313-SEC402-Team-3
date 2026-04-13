@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
+import { API_BASE } from "../apiConfig";
 
 const SubmitForm = () => {
   const { id } = useParams(); // get carId from URL params
@@ -31,7 +32,7 @@ const SubmitForm = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8084/api/inquiries", {
+      const response = await fetch(`${API_BASE}/api/inquiries`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inquiryData)

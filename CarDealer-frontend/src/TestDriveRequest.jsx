@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { API_BASE } from "../apiConfig";
 
 function TestDriveRequest() {
   const { id } = useParams(); // get clicked request ID
@@ -9,7 +10,7 @@ function TestDriveRequest() {
 
   // Fetch request details by ID
   useEffect(() => {
-    fetch(`http://localhost:8084/api/test-drives/${id}`, {credentials: "include"})
+    fetch(`${API_BASE}/api/test-drives/${id}`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setRequest(data))
       .catch((err) => console.error(err));
@@ -17,7 +18,10 @@ function TestDriveRequest() {
 
   // Delete request
   const handleDelete = () => {
-    fetch(`http://localhost:8084/api/test-drives/${id}`, { method: "DELETE",credentials: "include" })
+   fetch(`${API_BASE}/api/test-drives/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+})
       .then(() => navigate("/test-drives")) // go back to list after deletion
       .catch((err) => console.error(err));
   };
